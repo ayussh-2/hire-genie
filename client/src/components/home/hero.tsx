@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 export default function Hero() {
     return (
-        <section className="relative py-20 overflow-hidden min-h-screen flex items-center justify-center">
+        <section className="relative overflow-hidden min-h-screen flex items-center justify-center">
             <div className="auth-pattern absolute inset-0 opacity-50" />
             <div className="container relative">
                 <div className="max-w-3xl mx-auto text-center">
