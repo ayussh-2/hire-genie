@@ -32,7 +32,6 @@ export function Navbar() {
                         </span>
                     </Link>
 
-                    {/* Desktop Navigation */}
                     <NavigationMenu className="hidden md:flex">
                         <NavigationMenuList>
                             <NavigationMenuItem>
@@ -123,10 +122,10 @@ export function Navbar() {
                             asChild
                             className="hover:text-white"
                         >
-                            <Link href="/signin">Sign In</Link>
+                            <Link href="/login">Sign In</Link>
                         </Button>
                         <Button asChild>
-                            <Link href="/signup">Sign Up</Link>
+                            <Link href="/register">Register</Link>
                         </Button>
                     </div>
 
@@ -155,7 +154,6 @@ export function Navbar() {
                 </div>
             </div>
 
-            {/* Mobile Navigation Menu */}
             {mobileMenuOpen && (
                 <div className="fixed inset-0 top-[5rem] z-50 md:hidden">
                     <div className="p-6 space-y-6 bg-white">
@@ -225,7 +223,7 @@ export function Navbar() {
                                 asChild
                             >
                                 <Link
-                                    href="/signin"
+                                    href="/login"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
                                     Sign In
@@ -233,10 +231,10 @@ export function Navbar() {
                             </Button>
                             <Button className="w-full" asChild>
                                 <Link
-                                    href="/signup"
+                                    href="/register"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
-                                    Sign Up
+                                    Register
                                 </Link>
                             </Button>
                         </div>
