@@ -11,7 +11,7 @@ export default function CTA() {
                     <h2 className="text-3xl font-manrope font-bold mb-6">
                         Ready to Transform Your Hiring Process?
                     </h2>
-                    <p className="text-xl text-muted-foreground mb-8">
+                    <p className="text-xl text-muted-foreground mb-8 font-jakarta">
                         Join thousands of companies and job seekers who have
                         already discovered the power of AI-driven recruitment
                     </p>

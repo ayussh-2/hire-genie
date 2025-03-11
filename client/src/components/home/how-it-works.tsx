@@ -4,7 +4,7 @@ import { features } from "@/config/constant";
 
 export default function HowItWorks() {
     return (
-        <section className="py-20 bg-white/50">
+        <section className="py-20">
             <div className="container">
                 <h2 className="text-3xl font-manrope font-bold text-center mb-12">
                     How It Works
@@ -18,10 +18,10 @@ export default function HowItWorks() {
                             <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                                 {feature.icon}
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">
+                            <h3 className="text-xl font-semibold mb-2 font-manrope">
                                 {feature.title}
                             </h3>
-                            <p className="text-muted-foreground">
+                            <p className="text-muted-foreground font-jakarta">
                                 {feature.description}
                             </p>
                         </Card>

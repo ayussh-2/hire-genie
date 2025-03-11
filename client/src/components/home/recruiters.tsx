@@ -26,10 +26,10 @@ export default function Recruiters() {
                             <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                                 {benefit.icon}
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">
+                            <h3 className="text-xl font-semibold mb-2 font-manrope">
                                 {benefit.title}
                             </h3>
-                            <p className="text-muted-foreground">
+                            <p className="text-muted-foreground font-jakarta">
                                 {benefit.description}
                             </p>
                         </Card>
