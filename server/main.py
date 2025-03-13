@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from auth.routes import router as auth_router
 from database import create_tables
+import logging
+
+# Import the User model so it's registered with SQLAlchemy
+from auth.models import User  # Add this import
 
 app = FastAPI(title="HireGenie API", version="0.1.0")
 
@@ -13,17 +17,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router)
-
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the HireGenie API"}
+logger = logging.getLogger("uvicorn")
 
 
 @app.on_event("startup")
 def startup_db_client():
     create_tables()
+    logger.info("Database migrations completed successfully")
+
+
+app.include_router(auth_router, prefix="/api")
+
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the HireGenie API"}
 
 
 if __name__ == "__main__":

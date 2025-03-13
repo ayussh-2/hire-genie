@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { jakarta, manrope } from "./fonts";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
     title: "Hire Genie - Your Career Journey Starts Here",
@@ -25,6 +26,8 @@ export default function RootLayout({
                     enableSystem={false}
                     storageKey="job-portal-theme"
                 >
+                    <Toaster />
+
                     {children}
                 </ThemeProvider>
             </body>

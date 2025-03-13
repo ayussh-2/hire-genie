@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoginFormData, loginSchema } from "@/lib/validators/auth";
 import { Button } from "@/components/ui/button";
@@ -18,9 +20,11 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Lock, Mail, Briefcase, UserCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -35,10 +39,29 @@ export default function LoginPage() {
     async function onSubmit(data: LoginFormData) {
         setIsLoading(true);
         try {
-            // Handle login logic here
-            console.log(data);
+            const result = await signIn("credentials", {
+                email: data.email,
+                password: data.password,
+                role: data.role,
+                redirect: false,
+            });
+
+            console.log(result);
+
+            if (result?.error) {
+                toast.error("Invalid credentials. Please try again.");
+            } else {
+                const redirectPath =
+                    data.role === "recruiter"
+                        ? "/recruiter/dashboard"
+                        : "/jobs";
+
+                router.push(redirectPath);
+                toast.success("Login successful!");
+            }
         } catch (error) {
             console.error(error);
+            toast.error("An error occurred during login");
         } finally {
             setIsLoading(false);
         }
@@ -71,6 +94,7 @@ export default function LoginPage() {
                                 type="email"
                                 className="pl-10 h-12 text-base bg-white border-muted"
                                 {...form.register("email")}
+                                disabled={isLoading}
                             />
                         </div>
                         {form.formState.errors.email && (
@@ -93,6 +117,7 @@ export default function LoginPage() {
                                 type="password"
                                 className="pl-10 h-12 text-base bg-white border-muted"
                                 {...form.register("password")}
+                                disabled={isLoading}
                             />
                         </div>
                         {form.formState.errors.password && (
@@ -153,6 +178,7 @@ export default function LoginPage() {
                                 id="rememberMe"
                                 className="border-muted data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                 {...form.register("rememberMe")}
+                                disabled={isLoading}
                             />
                             <Label htmlFor="rememberMe" className="text-sm">
                                 Remember me
