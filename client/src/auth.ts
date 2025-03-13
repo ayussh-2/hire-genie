@@ -9,37 +9,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials) {
+            async authorize(credentials, req) {
                 if (!credentials?.email || !credentials?.password) {
                     return null;
                 }
-
                 try {
                     const response = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/token`,
+                        `${process.env.NEXT_PUBLIC_API_URL}/auth/token`,
                         {
                             method: "POST",
                             headers: {
-                                "Content-Type":
-                                    "application/x-www-form-urlencoded",
+                                "Content-Type": "application/json",
                             },
-                            body: new URLSearchParams({
-                                username: credentials.email as string,
+                            body: JSON.stringify({
+                                email: credentials.email as string,
                                 password: credentials.password as string,
                             }),
                         }
                     );
 
                     const data = await response.json();
-
-                    if (response.ok && data.access_token) {
+                    console.log("Login response:", data);
+                    console.log(response.ok);
+                    if (response.ok && data?.status == "success") {
                         return {
-                            id: data.user.id,
-                            email: data.user.email,
-                            name: data.user.name,
-                            accessToken: data.access_token,
+                            id: data.data.user.id,
+                            email: data.data.user.email,
+                            accessToken: data.data.access_token,
                         };
                     }
+
                     return null;
                 } catch (error) {
                     console.error("Authentication error:", error);
@@ -70,5 +69,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     pages: {
         signIn: "/login",
+        error: "/error",
     },
 });

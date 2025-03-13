@@ -26,7 +26,14 @@ export default function RootLayout({
                     enableSystem={false}
                     storageKey="job-portal-theme"
                 >
-                    <Toaster />
+                    <Toaster
+                        position="top-right"
+                        toastOptions={{
+                            style: {
+                                color: "#3fbcea",
+                            },
+                        }}
+                    />
 
                     {children}
                 </ThemeProvider>

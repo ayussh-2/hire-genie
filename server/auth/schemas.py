@@ -6,6 +6,10 @@ class UserBase(BaseModel):
     email: EmailStr
     username: str
 
+    class Config:
+        orm_mode = True
+        from_attributes = True  # Added this line
+
 
 class UserCreate(UserBase):
     password: str
@@ -23,6 +27,7 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+        from_attributes = True  # Added this line
 
 
 class Token(BaseModel):

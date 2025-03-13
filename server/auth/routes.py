@@ -31,11 +31,31 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     )
 
 
+@router.post("/login")
+def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if not db_user:
+        return error_response(
+            message="Login failed",
+            errors="User not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    if not crud.authenticate_user(db, email=user.email, password=user.password):
+        return error_response(
+            message="Login failed",
+            errors="Incorrect email or password",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+    return success_response(
+        data=schemas.User.from_orm(db_user).dict(),
+        message="Login successful",
+        status_code=status.HTTP_200_OK,
+    )
+
+
 @router.post("/token")
-def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
-):
-    user = crud.authenticate_user(db, form_data.username, form_data.password)
+def login_for_access_token(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    user = crud.authenticate_user(db, user.email, user.password)
     if not user:
         return error_response(
             message="Authentication failed",
@@ -45,10 +65,17 @@ def login_for_access_token(
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={
+            "sub": user.username,
+            "name": user.username,
+            "email": user.email,
+            "id": user.id,
+            "role": user.role,
+        },
+        expires_delta=access_token_expires,
     )
 
-    token_data = {"access_token": access_token, "token_type": "bearer"}
+    token_data = {"access_token": access_token, "token_type": "bearer", "user": user}
     return success_response(data=token_data, message="Login successful")
 
 

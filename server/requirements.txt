@@ -2,6 +2,7 @@ fastapi>=0.104.0
 uvicorn>=0.24.0
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
+bcrypt==3.2.2
 asyncpg
 databases
 pydantic>=2.4.0
