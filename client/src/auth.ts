@@ -9,7 +9,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials, req) {
+            async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
                     return null;
                 }
@@ -29,8 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     );
 
                     const data = await response.json();
-                    console.log("Login response:", data);
-                    console.log(response.ok);
+
                     if (response.ok && data?.status == "success") {
                         return {
                             id: data.data.user.id,

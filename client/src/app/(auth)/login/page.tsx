@@ -40,12 +40,7 @@ export default function LoginPage() {
             if (result?.error) {
                 toast.error("Invalid credentials. Please try again.");
             } else {
-                const redirectPath =
-                    data.role === "recruiter"
-                        ? "/recruiter/dashboard"
-                        : "/jobs";
-
-                router.push(redirectPath);
+                router.push("/dahboard");
                 toast.success("Login successful!");
             }
         } catch (error) {

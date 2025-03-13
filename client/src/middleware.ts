@@ -4,28 +4,17 @@ import { auth } from "./auth";
 
 export async function middleware(request: NextRequest) {
     const session = await auth();
-
-    if (request.nextUrl.pathname.startsWith("/api/protected")) {
-        if (!session) {
-            return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 401 }
-            );
-        }
-
-        const requestHeaders = new Headers(request.headers);
-        requestHeaders.set("Authorization", `Bearer ${session.accessToken}`);
-
-        return NextResponse.next({
-            request: {
-                headers: requestHeaders,
-            },
-        });
+    if (
+        session &&
+        (request.nextUrl.pathname === "/login" ||
+            request.nextUrl.pathname === "/register")
+    ) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/api/protected/:path*"],
+    matcher: ["/api/protected/:path*", "/login", "/register"],
 };
