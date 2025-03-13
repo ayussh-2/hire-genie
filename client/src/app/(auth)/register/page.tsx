@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -9,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
     Card,
     CardContent,
@@ -26,23 +24,23 @@ import {
     Check,
     X,
 } from "lucide-react";
+import { useApiRequest } from "@/hooks/use-api";
 
 export default function RegisterPage() {
-    const [isLoading, setIsLoading] = useState(false);
-
+    const { isLoading, makeRequest, data: response, error } = useApiRequest();
     const form = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            name: "",
+            username: "",
             email: "",
             password: "",
             confirmPassword: "",
             role: "jobseeker",
-            terms: false,
         },
     });
 
     const password = form.watch("password");
+    const watchedRole = form.watch("role");
 
     const passwordChecks = [
         { label: "At least 8 characters", valid: password.length >= 8 },
@@ -56,14 +54,20 @@ export default function RegisterPage() {
     ];
 
     async function onSubmit(data: RegisterFormData) {
-        setIsLoading(true);
-        try {
-            // Handle registration logic here
-            console.log(data);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
+        await makeRequest("/auth/register", {
+            method: "POST",
+            body: data,
+            showToast: true,
+            successMessage: "Account created successfully!",
+            errorMessage: "An error occurred while creating your account",
+        });
+
+        if (error) {
+            console.log(error);
+        }
+
+        if (response) {
+            console.log(response);
         }
     }
 
@@ -92,12 +96,12 @@ export default function RegisterPage() {
                                 id="name"
                                 placeholder="John Doe"
                                 className="pl-10 h-12 text-base bg-white border-muted"
-                                {...form.register("name")}
+                                {...form.register("username")}
                             />
                         </div>
-                        {form.formState.errors.name && (
+                        {form.formState.errors.username && (
                             <p className="text-sm text-destructive mt-1">
-                                {form.formState.errors.name.message}
+                                {form.formState.errors.username.message}
                             </p>
                         )}
                     </div>
@@ -191,19 +195,28 @@ export default function RegisterPage() {
                     <div className="space-y-3">
                         <Label className="text-sm font-medium">I am a</Label>
                         <RadioGroup
-                            defaultValue="jobseeker"
+                            value={watchedRole}
+                            onValueChange={(value) =>
+                                form.setValue(
+                                    "role",
+                                    value as "recruiter" | "jobseeker"
+                                )
+                            }
                             className="grid grid-cols-2 gap-4"
-                            {...form.register("role")}
                         >
                             <div className="relative">
                                 <RadioGroupItem
                                     value="jobseeker"
                                     id="jobseeker"
-                                    className="peer sr-only"
+                                    className="sr-only"
                                 />
                                 <Label
                                     htmlFor="jobseeker"
-                                    className="flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer hover:border-primary peer-checked:border-primary peer-checked:bg-primary/5 transition-all"
+                                    className={`flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${
+                                        watchedRole === "jobseeker"
+                                            ? "border-primary bg-primary/5"
+                                            : "hover:border-primary"
+                                    }`}
                                 >
                                     <UserCircle className="h-6 w-6 mb-2 text-muted-foreground" />
                                     <span className="text-sm font-medium">
@@ -215,11 +228,15 @@ export default function RegisterPage() {
                                 <RadioGroupItem
                                     value="recruiter"
                                     id="recruiter"
-                                    className="peer sr-only"
+                                    className="sr-only"
                                 />
                                 <Label
                                     htmlFor="recruiter"
-                                    className="flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer hover:border-primary peer-checked:border-primary peer-checked:bg-primary/5 transition-all"
+                                    className={`flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${
+                                        watchedRole === "recruiter"
+                                            ? "border-primary bg-primary/5"
+                                            : "hover:border-primary"
+                                    }`}
                                 >
                                     <Briefcase className="h-6 w-6 mb-2 text-muted-foreground" />
                                     <span className="text-sm font-medium">
@@ -234,34 +251,7 @@ export default function RegisterPage() {
                             </p>
                         )}
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            id="terms"
-                            className="border-muted data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                            {...form.register("terms")}
-                        />
-                        <Label htmlFor="terms" className="text-sm">
-                            I agree to the{" "}
-                            <Link
-                                href="/terms"
-                                className="text-primary hover:text-primary/80 transition-colors"
-                            >
-                                Terms of Service
-                            </Link>{" "}
-                            and{" "}
-                            <Link
-                                href="/privacy"
-                                className="text-primary hover:text-primary/80 transition-colors"
-                            >
-                                Privacy Policy
-                            </Link>
-                        </Label>
-                    </div>
-                    {form.formState.errors.terms && (
-                        <p className="text-sm text-destructive">
-                            {form.formState.errors.terms.message}
-                        </p>
-                    )}
+
                     <Button
                         type="submit"
                         className="w-full h-12 text-base font-medium bg-primary hover:bg-primary/90 cursor-pointer"

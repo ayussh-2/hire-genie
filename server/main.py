@@ -3,9 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from auth.routes import router as auth_router
 from database import create_tables
 import logging
-
-# Import the User model so it's registered with SQLAlchemy
-from auth.models import User  # Add this import
+from auth.models import User
 
 app = FastAPI(title="HireGenie API", version="0.1.0")
 

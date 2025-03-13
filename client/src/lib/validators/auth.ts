@@ -11,7 +11,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
     .object({
-        name: z.string().min(2, "Name must be at least 2 characters"),
+        username: z.string().min(2, "Name must be at least 2 characters"),
         email: z.string().email("Please enter a valid email address"),
         password: z
             .string()
@@ -24,9 +24,6 @@ export const registerSchema = z
         role: z.enum(["recruiter", "jobseeker"], {
             required_error: "Please select a role",
         }),
-        terms: z
-            .boolean()
-            .refine((val) => val, "You must accept the terms and conditions"),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords do not match",

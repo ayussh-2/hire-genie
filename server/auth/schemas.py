@@ -9,7 +9,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-    is_recruiter: bool = False
+    role: str
 
 
 class UserLogin(BaseModel):
@@ -20,7 +20,6 @@ class UserLogin(BaseModel):
 class User(UserBase):
     id: int
     is_active: bool
-    is_recruiter: bool
 
     class Config:
         orm_mode = True

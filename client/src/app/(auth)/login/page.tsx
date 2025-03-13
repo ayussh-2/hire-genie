@@ -36,6 +36,8 @@ export default function LoginPage() {
         },
     });
 
+    const watchedRole = form.watch("role");
+
     async function onSubmit(data: LoginFormData) {
         setIsLoading(true);
         try {
@@ -129,19 +131,28 @@ export default function LoginPage() {
                     <div className="space-y-3">
                         <Label className="text-sm font-medium">I am a</Label>
                         <RadioGroup
-                            defaultValue="jobseeker"
+                            value={watchedRole}
+                            onValueChange={(value) =>
+                                form.setValue(
+                                    "role",
+                                    value as "recruiter" | "jobseeker"
+                                )
+                            }
                             className="grid grid-cols-2 gap-4"
-                            {...form.register("role")}
                         >
                             <div className="relative">
                                 <RadioGroupItem
                                     value="jobseeker"
                                     id="jobseeker"
-                                    className="peer sr-only"
+                                    className="sr-only"
                                 />
                                 <Label
                                     htmlFor="jobseeker"
-                                    className="flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer hover:border-primary peer-checked:border-primary peer-checked:bg-primary/5 transition-all"
+                                    className={`flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${
+                                        watchedRole === "jobseeker"
+                                            ? "border-primary bg-primary/5"
+                                            : "hover:border-primary"
+                                    }`}
                                 >
                                     <UserCircle className="h-6 w-6 mb-2 text-muted-foreground" />
                                     <span className="text-sm font-medium">
@@ -153,11 +164,15 @@ export default function LoginPage() {
                                 <RadioGroupItem
                                     value="recruiter"
                                     id="recruiter"
-                                    className="peer sr-only"
+                                    className="sr-only"
                                 />
                                 <Label
                                     htmlFor="recruiter"
-                                    className="flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer hover:border-primary peer-checked:border-primary peer-checked:bg-primary/5 transition-all"
+                                    className={`flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${
+                                        watchedRole === "recruiter"
+                                            ? "border-primary bg-primary/5"
+                                            : "hover:border-primary"
+                                    }`}
                                 >
                                     <Briefcase className="h-6 w-6 mb-2 text-muted-foreground" />
                                     <span className="text-sm font-medium">
