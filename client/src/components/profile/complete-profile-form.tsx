@@ -60,7 +60,6 @@ export default function CompleteProfileForm() {
     };
 
     const onSubmit = async (data: ProfileFormData) => {
-        // First create the profile
         const profileResponse = await makeRequest("/jobs/profile", {
             method: "POST",
             body: {
@@ -73,9 +72,7 @@ export default function CompleteProfileForm() {
             successMessage: "Profile created successfully!",
         });
 
-        // If profile creation was successful and we have skills to add
         if (profileResponse?.status === "success" && skills.length > 0) {
-            // Add each skill one by one
             for (const skill of skills) {
                 await makeRequest(
                     `/jobs/profile/skills/${encodeURIComponent(skill)}`,
@@ -87,14 +84,13 @@ export default function CompleteProfileForm() {
             }
         }
 
-        // Redirect to dashboard after successful profile creation
         if (profileResponse?.status === "success") {
             router.push("/dashboard");
         }
     };
 
     return (
-        <Card className="max-w-2xl mx-auto">
+        <Card className="border-none soft-shadow max-w-4xl mx-auto my-20">
             <CardHeader>
                 <CardTitle className="text-2xl font-bold">
                     Complete Your Profile
@@ -110,94 +106,100 @@ export default function CompleteProfileForm() {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-6"
                     >
-                        <FormField
-                            control={form.control}
-                            name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Professional Title</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="e.g. Software Engineer"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Professional Title
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g. Software Engineer"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="location"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Location</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="e.g. San Francisco, CA"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="location"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Location</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g. San Francisco, CA"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="company"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        Current Company (Optional)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="e.g. Acme Inc."
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="company"
+                                render={({ field }) => (
+                                    <FormItem className="md:col-span-2">
+                                        <FormLabel>
+                                            Current Company (Optional)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="e.g. Acme Inc."
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                        <FormField
-                            control={form.control}
-                            name="experience"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Experience</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="Describe your professional experience"
-                                            className="min-h-[100px]"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="experience"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Experience</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Describe your professional experience"
+                                                className="min-h-[100px]"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="education"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Education</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="Describe your educational background"
-                                            className="min-h-[100px]"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="education"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Education</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Describe your educational background"
+                                                className="min-h-[100px]"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <div className="space-y-2">
                             <FormLabel>Skills</FormLabel>

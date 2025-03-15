@@ -27,7 +27,6 @@ export default function LoginPage() {
             const result = await login({
                 email: data.email,
                 password: data.password,
-                redirect: false,
             });
 
             if (result?.error) {

@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
         if (response) {
             console.log(response);
-            router.push("/complete-profile");
+            router.push("/login");
         }
     }
 

@@ -15,7 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
                 try {
                     const response = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_URL}/auth/token`,
+                        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/token`,
                         {
                             method: "POST",
                             headers: {

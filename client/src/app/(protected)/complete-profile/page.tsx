@@ -15,8 +15,9 @@ export default function CompleteProfilePage() {
                 method: "GET",
                 showToast: false,
             });
+            console.log(response);
 
-            if (response?.status === "success" && response?.data) {
+            if (response?.status == "success") {
                 router.push("/dashboard");
             }
         };

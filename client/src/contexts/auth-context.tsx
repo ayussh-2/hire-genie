@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
@@ -7,10 +8,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type User = {
+    accessToken: any;
     id: string;
     email: string;
     name: string;
-    role: string;
+    role?: string;
 };
 
 type AuthContextType = {
@@ -25,7 +27,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: session, status } = useSession();
     const router = useRouter();
-    console.log("session", session);
 
     const user = session?.user
         ? {
@@ -33,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               email: session.user.email as string,
               name: session.user.username as string,
               role: session.user.role as string,
-              accessToken: session.accessToken as string,
+              accessToken: (session as any).accessToken as string,
           }
         : null;
 

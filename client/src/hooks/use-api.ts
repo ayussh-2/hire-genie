@@ -136,9 +136,7 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
 
                     setIsLoading(false);
 
-                    // Handle authentication errors specifically
                     if (response.status === 401) {
-                        // Could trigger a logout or redirect to login
                         toast.error(
                             "Authentication required. Please log in again."
                         );
@@ -147,7 +145,6 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
                     return responseData;
                 }
 
-                // Success case
                 setData(responseData.data || null);
 
                 if (showToast) {
@@ -160,7 +157,11 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
                 }
 
                 setIsLoading(false);
-                return responseData;
+                return {
+                    status: "success",
+                    message: successMessage as string,
+                    data: responseData.data,
+                };
             } catch (err) {
                 console.error("API request error:", err);
 

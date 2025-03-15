@@ -4,8 +4,7 @@ from auth.routes import router as auth_router
 from jobs.routes import router as jobs_router
 from database import create_tables
 import logging
-from auth.models import User
-from jobs.models import Job
+
 
 app = FastAPI(title="HireGenie API", version="0.1.0")
 
@@ -18,12 +17,6 @@ app.add_middleware(
 )
 
 logger = logging.getLogger("uvicorn")
-
-
-# @app.on_event("startup")
-# def startup_db_client():
-#     create_tables()
-#     logger.info("Database migrations completed successfully")
 
 
 app.include_router(auth_router, prefix="/api")
