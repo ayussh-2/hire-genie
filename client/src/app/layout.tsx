@@ -3,6 +3,8 @@ import "./globals.css";
 import { jakarta, manrope } from "./fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
+import { AuthProvider } from "@/contexts/auth-context";
 
 export const metadata: Metadata = {
     title: "Hire Genie - Your Career Journey Starts Here",
@@ -20,23 +22,27 @@ export default function RootLayout({
             <body
                 className={`${jakarta.variable} ${manrope.variable} antialiased`}
             >
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="light"
-                    enableSystem={false}
-                    storageKey="job-portal-theme"
-                >
-                    <Toaster
-                        position="top-right"
-                        toastOptions={{
-                            style: {
-                                color: "#3fbcea",
-                            },
-                        }}
-                    />
+                <SessionProvider>
+                    <AuthProvider>
+                        <ThemeProvider
+                            attribute="class"
+                            defaultTheme="light"
+                            enableSystem={false}
+                            storageKey="job-portal-theme"
+                        >
+                            <Toaster
+                                position="top-right"
+                                toastOptions={{
+                                    style: {
+                                        color: "#3fbcea",
+                                    },
+                                }}
+                            />
 
-                    {children}
-                </ThemeProvider>
+                            {children}
+                        </ThemeProvider>
+                    </AuthProvider>
+                </SessionProvider>
             </body>
         </html>
     );

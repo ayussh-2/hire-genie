@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
 
 interface ApiResponse<T> {
     status: "success" | "error";
@@ -23,6 +24,7 @@ interface RequestOptions {
     successMessage?: string | ((data: ApiResponse<any>) => string);
     errorMessage?: string | ((errors: ApiResponse<any>["errors"]) => string);
     useErrorMessageFromResponse?: boolean;
+    requireAuth?: boolean;
 }
 
 interface UseApiRequestResult<T> {
@@ -39,6 +41,7 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [data, setData] = useState<T | null>(null);
     const [error, setError] = useState<ApiResponse<any>["errors"] | null>(null);
+    const { user } = useAuth();
 
     const makeRequest = useCallback(
         async (
@@ -52,17 +55,49 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
                 showToast = true,
                 loadingMessage = "Loading...",
                 successMessage = "Success!",
+                requireAuth = true,
             } = options;
 
             setIsLoading(true);
             setError(null);
 
+            const authHeaders: Record<string, string> = {};
+            if (requireAuth) {
+                if (!user) {
+                    setError({ message: "Authentication required" });
+                    setIsLoading(false);
+                    if (showToast) {
+                        toast.error(
+                            "You must be logged in to access this resource"
+                        );
+                    }
+                    return null;
+                }
+
+                if (user) {
+                    try {
+                        if (user?.accessToken) {
+                            authHeaders[
+                                "Authorization"
+                            ] = `Bearer ${user.accessToken}`;
+                        }
+                    } catch (e) {
+                        console.error(
+                            "Failed to parse session from localStorage",
+                            e
+                        );
+                    }
+                }
+            }
+
             const requestOptions: RequestInit = {
                 method,
                 headers: {
                     "Content-Type": "application/json",
+                    ...authHeaders,
                     ...headers,
                 },
+                credentials: "include",
             };
 
             if (body && method !== "GET") {
@@ -75,54 +110,76 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
             }
 
             try {
+                const apiUrl = url.startsWith("/api") ? url : `/api${url}`;
+
                 const response = await fetch(
-                    process.env.NEXT_PUBLIC_API_URL + url,
+                    `${process.env.NEXT_PUBLIC_API_URL}${apiUrl}`,
                     requestOptions
                 );
+
                 const responseData = (await response.json()) as ApiResponse<T>;
 
-                // Check status field instead of success
-                if (responseData.status !== "success") {
-                    throw responseData;
+                if (!response.ok || responseData.status === "error") {
+                    // Handle error responses
+                    setError(
+                        responseData.errors || {
+                            message: responseData.message || "Unknown error",
+                        }
+                    );
+
+                    if (showToast) {
+                        toast.error(
+                            responseData.message || "An error occurred",
+                            { id: toastId }
+                        );
+                    }
+
+                    setIsLoading(false);
+
+                    // Handle authentication errors specifically
+                    if (response.status === 401) {
+                        // Could trigger a logout or redirect to login
+                        toast.error(
+                            "Authentication required. Please log in again."
+                        );
+                    }
+
+                    return responseData;
                 }
 
+                // Success case
                 setData(responseData.data || null);
 
                 if (showToast) {
-                    const successMsg =
+                    toast.success(
                         typeof successMessage === "function"
                             ? successMessage(responseData)
-                            : successMessage;
-                    toast.success(successMsg, { id: toastId });
+                            : successMessage,
+                        { id: toastId }
+                    );
                 }
 
                 setIsLoading(false);
                 return responseData;
             } catch (err) {
-                const apiError = err as ApiResponse<any>;
+                console.error("API request error:", err);
 
-                // Update error handling based on your server format
-                const errorMsg =
-                    apiError.message && apiError.errors
-                        ? `${apiError.message}: ${apiError.errors}`
-                        : apiError.message || "An error occurred";
+                const errorMessage =
+                    "Network error. Please check your connection.";
 
-                // Set error state
                 setError({
-                    status: apiError.status || "error",
-                    message: apiError.message || "Unknown error",
-                    errors: apiError.errors,
+                    message: errorMessage,
                 });
 
                 if (showToast) {
-                    toast.error(errorMsg, { id: toastId });
+                    toast.error(errorMessage, { id: toastId });
                 }
 
                 setIsLoading(false);
-                return apiError;
+                return null;
             }
         },
-        []
+        [user]
     );
 
     return { isLoading, data, error, makeRequest };

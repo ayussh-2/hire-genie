@@ -3,10 +3,6 @@ import * as z from "zod";
 export const loginSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    role: z.enum(["recruiter", "jobseeker"], {
-        required_error: "Please select a role",
-    }),
-    rememberMe: z.boolean().default(false),
 });
 
 export const registerSchema = z

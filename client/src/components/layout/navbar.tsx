@@ -14,13 +14,27 @@ import {
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, User, X } from "lucide-react";
 // import { ModeToggle } from "@/components/theme/mode-toggle";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/auth-context";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Navbar() {
     const pathname = usePathname();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { user, isAuthenticated, logout } = useAuth();
+
+    const handleLogout = async () => {
+        await logout();
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full py-5 bg-background/50 backdrop-blur">
@@ -115,27 +129,60 @@ export function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {/* <ModeToggle /> */}
                     <div className="hidden md:flex gap-4">
-                        <Button
-                            variant="outline"
-                            asChild
-                            className="hover:text-white"
-                        >
-                            <Link href="/login">Sign In</Link>
-                        </Button>
-                        <Button asChild>
-                            <Link href="/register">Register</Link>
-                        </Button>
+                        {isAuthenticated ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Avatar className="cursor-pointer">
+                                        <AvatarImage
+                                            src={user?.image}
+                                            alt={user?.name || "User"}
+                                        />
+                                        <AvatarFallback>
+                                            {user?.name?.charAt(0) ||
+                                                user?.email?.charAt(0) ||
+                                                "U"}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>
+                                        {user?.name || user?.email}
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href="/dashboard"
+                                            className="cursor-pointer"
+                                        >
+                                            <User className="mr-2 h-4 w-4" />
+                                            <span>Dashboard</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={handleLogout}
+                                        className="cursor-pointer"
+                                    >
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        <span>Logout</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <>
+                                <Button
+                                    variant="outline"
+                                    asChild
+                                    className="hover:text-white"
+                                >
+                                    <Link href="/login">Sign In</Link>
+                                </Button>
+                                <Button asChild>
+                                    <Link href="/register">Register</Link>
+                                </Button>
+                            </>
+                        )}
                     </div>
-
-                    {/* User Avatar (show when logged in) */}
-                    {/*
-                    <Avatar>
-                      <AvatarImage src="/avatars/user.png" alt="User" />
-                      <AvatarFallback>UN</AvatarFallback>
-                    </Avatar>
-                    */}
 
                     {/* Hamburger Menu Button */}
                     <Button
@@ -184,59 +231,70 @@ export function Navbar() {
                                 <h3 className="text-lg font-manrope mb-2">
                                     Resources
                                 </h3>
-                                {/* <div className="pl-4 space-y-2">
-                                    <Link
-                                        href="/resources/guides"
-                                        className="block py-1 px-2 text-sm transition-colors rounded-md hover:bg-accent"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Guides
-                                    </Link>
-                                    <Link
-                                        href="/resources/resume"
-                                        className="block py-1 px-2 text-sm transition-colors rounded-md hover:bg-accent"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Resume Tips
-                                    </Link>
-                                    <Link
-                                        href="/resources/interview"
-                                        className="block py-1 px-2 text-sm transition-colors rounded-md hover:bg-accent"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Interview Prep
-                                    </Link>
-                                    <Link
-                                        href="/resources/networking"
-                                        className="block py-1 px-2 text-sm transition-colors rounded-md hover:bg-accent"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Networking
-                                    </Link>
-                                </div> */}
+                                {/* Resource links commented out */}
                             </div>
                         </nav>
                         <div className="flex flex-col space-y-3">
-                            <Button
-                                variant="outline"
-                                className="w-full"
-                                asChild
-                            >
-                                <Link
-                                    href="/login"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    Sign In
-                                </Link>
-                            </Button>
-                            <Button className="w-full" asChild>
-                                <Link
-                                    href="/register"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    Register
-                                </Link>
-                            </Button>
+                            {isAuthenticated ? (
+                                <>
+                                    <div className="flex items-center gap-3 p-3 border rounded-lg">
+                                        <Avatar>
+                                            <AvatarImage
+                                                src={user?.image}
+                                                alt={user?.name || "User"}
+                                            />
+                                            <AvatarFallback>
+                                                {user?.name?.charAt(0) ||
+                                                    user?.email?.charAt(0) ||
+                                                    "U"}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-sm font-medium truncate">
+                                                {user?.name || user?.email}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="destructive"
+                                        className="w-full"
+                                        onClick={async () => {
+                                            setMobileMenuOpen(false);
+                                            await handleLogout();
+                                        }}
+                                    >
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        Logout
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full"
+                                        asChild
+                                    >
+                                        <Link
+                                            href="/login"
+                                            onClick={() =>
+                                                setMobileMenuOpen(false)
+                                            }
+                                        >
+                                            Sign In
+                                        </Link>
+                                    </Button>
+                                    <Button className="w-full" asChild>
+                                        <Link
+                                            href="/register"
+                                            onClick={() =>
+                                                setMobileMenuOpen(false)
+                                            }
+                                        >
+                                            Register
+                                        </Link>
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

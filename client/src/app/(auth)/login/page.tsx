@@ -18,12 +18,8 @@ export default function LoginPage() {
         defaultValues: {
             email: "",
             password: "",
-            role: "jobseeker",
-            rememberMe: false,
         },
     });
-
-    const watchedRole = form.watch("role");
 
     async function onSubmit(data: LoginFormData) {
         setIsLoading(true);
@@ -31,16 +27,13 @@ export default function LoginPage() {
             const result = await login({
                 email: data.email,
                 password: data.password,
-                role: data.role,
                 redirect: false,
             });
-
-            console.log(result);
 
             if (result?.error) {
                 toast.error("Invalid credentials. Please try again.");
             } else {
-                router.push("/dahboard");
+                router.push("/dashboard");
                 toast.success("Login successful!");
             }
         } catch (error) {
@@ -51,12 +44,5 @@ export default function LoginPage() {
         }
     }
 
-    return (
-        <LoginForm
-            form={form}
-            onSubmit={onSubmit}
-            isLoading={isLoading}
-            watchedRole={watchedRole}
-        />
-    );
+    return <LoginForm form={form} onSubmit={onSubmit} isLoading={isLoading} />;
 }

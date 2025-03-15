@@ -5,8 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import {
     Card,
     CardContent,
@@ -14,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Lock, Mail, Briefcase, UserCircle } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { LoginFormData } from "@/lib/validators/auth";
 
@@ -22,14 +21,12 @@ type LoginFormProps = {
     form: UseFormReturn<LoginFormData>;
     onSubmit: (data: LoginFormData) => Promise<void>;
     isLoading: boolean;
-    watchedRole: string;
 };
 
 export default function LoginForm({
     form,
     onSubmit,
     isLoading,
-    watchedRole,
 }: LoginFormProps) {
     return (
         <Card className="border-none soft-shadow max-w-lg mx-auto my-20">
@@ -93,77 +90,8 @@ export default function LoginForm({
                             </p>
                         )}
                     </div>
-                    <div className="space-y-3">
-                        <Label className="text-sm font-medium">I am a</Label>
-                        <RadioGroup
-                            value={watchedRole}
-                            onValueChange={(value) =>
-                                form.setValue(
-                                    "role",
-                                    value as "recruiter" | "jobseeker"
-                                )
-                            }
-                            className="grid grid-cols-2 gap-4"
-                        >
-                            <div className="relative">
-                                <RadioGroupItem
-                                    value="jobseeker"
-                                    id="jobseeker"
-                                    className="sr-only"
-                                />
-                                <Label
-                                    htmlFor="jobseeker"
-                                    className={`flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${
-                                        watchedRole === "jobseeker"
-                                            ? "border-primary bg-primary/5"
-                                            : "hover:border-primary"
-                                    }`}
-                                >
-                                    <UserCircle className="h-6 w-6 mb-2 text-muted-foreground" />
-                                    <span className="text-sm font-medium">
-                                        Job Seeker
-                                    </span>
-                                </Label>
-                            </div>
-                            <div className="relative">
-                                <RadioGroupItem
-                                    value="recruiter"
-                                    id="recruiter"
-                                    className="sr-only"
-                                />
-                                <Label
-                                    htmlFor="recruiter"
-                                    className={`flex flex-col items-center justify-center p-4 border rounded-xl cursor-pointer transition-all ${
-                                        watchedRole === "recruiter"
-                                            ? "border-primary bg-primary/5"
-                                            : "hover:border-primary"
-                                    }`}
-                                >
-                                    <Briefcase className="h-6 w-6 mb-2 text-muted-foreground" />
-                                    <span className="text-sm font-medium">
-                                        Recruiter
-                                    </span>
-                                </Label>
-                            </div>
-                        </RadioGroup>
-                        {form.formState.errors.role && (
-                            <p className="text-sm text-destructive">
-                                {form.formState.errors.role.message as string}
-                            </p>
-                        )}
-                    </div>
+
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="rememberMe"
-                                className="border-muted data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                                {...form.register("rememberMe")}
-                                disabled={isLoading}
-                            />
-                            <Label htmlFor="rememberMe" className="text-sm">
-                                Remember me
-                            </Label>
-                        </div>
                         <Link
                             href="/reset-password"
                             className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
