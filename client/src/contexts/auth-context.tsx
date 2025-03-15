@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useState } from "react";
 import { useSession } from "next-auth/react";
 import { signOut } from "@/auth";
 import { useRouter } from "next/navigation";
@@ -20,6 +20,7 @@ type AuthContextType = {
     isLoading: boolean;
     isAuthenticated: boolean;
     logout: () => Promise<void>;
+    updateSession: (userData: any) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,16 +28,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: session, status } = useSession();
     const router = useRouter();
-
-    const user = session?.user
-        ? {
-              id: session.user.id as string,
-              email: session.user.email as string,
-              name: session.user.username as string,
-              role: session.user.role as string,
-              accessToken: (session as any).accessToken as string,
-          }
-        : null;
+    const [user, setUser] = useState<User | null>(
+        session?.user
+            ? {
+                  id: session.user.id as string,
+                  email: session.user.email as string,
+                  name: session.user.username as string,
+                  role: session.user.role as string,
+                  accessToken: (session as any).accessToken as string,
+              }
+            : null
+    );
 
     const isLoading = status === "loading";
     const isAuthenticated = !!user;
@@ -52,6 +54,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const updateSession = async (userData: any) => {
+        try {
+            setUser(userData);
+        } catch (error) {
+            console.error("Failed to update session:", error);
+        }
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -59,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 isLoading,
                 isAuthenticated,
                 logout,
+                updateSession,
             }}
         >
             {children}

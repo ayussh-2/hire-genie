@@ -7,8 +7,7 @@ class UserBase(BaseModel):
     username: str
 
     class Config:
-        orm_mode = True
-        from_attributes = True  # Added this line
+        from_attributes = True
 
 
 class UserCreate(UserBase):
@@ -21,18 +20,41 @@ class UserLogin(BaseModel):
     password: str
 
 
+class ProfileBase(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    bio: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ProfileCreate(ProfileBase):
+    pass
+
+
+class Profile(ProfileBase):
+    id: int
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
+
 class User(UserBase):
     id: int
     is_active: bool
+    profile: Optional[Profile] = None
 
     class Config:
-        orm_mode = True
-        from_attributes = True  # Added this line
+        from_attributes = True
 
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
+    user: dict
 
 
 class TokenData(BaseModel):

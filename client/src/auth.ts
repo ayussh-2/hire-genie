@@ -30,6 +30,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     const data = await response.json();
 
+                    console.log(data);
+
                     if (response.ok && data?.status == "success") {
                         return {
                             id: data.data.user.id,

@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 from database import Base
+from jobs.models import Profile, Application, SavedJob
 
 
 class User(Base):

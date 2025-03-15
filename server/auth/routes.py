@@ -2,10 +2,11 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from jose import JWTError, jwt
 
 from database import get_db
 from core.config import settings
-from core.security import create_access_token
+from core.security import create_access_token, create_refresh_token
 from core.responses import success_response, error_response
 from auth import crud, schemas
 
@@ -75,7 +76,19 @@ def login_for_access_token(user: schemas.UserLogin, db: Session = Depends(get_db
         expires_delta=access_token_expires,
     )
 
-    token_data = {"access_token": access_token, "token_type": "bearer", "user": user}
+    refresh_token = create_refresh_token(
+        data={
+            "sub": user.username,
+            "id": user.id,
+        }
+    )
+
+    token_data = {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "user": schemas.User.from_orm(user).dict(),
+    }
     return success_response(data=token_data, message="Login successful")
 
 
@@ -92,3 +105,48 @@ def read_users_me(current_user=Depends(get_current_user)):
         data=schemas.User.from_orm(current_user).dict(),
         message="User details retrieved successfully",
     )
+
+
+@router.post("/refresh", response_model=schemas.Token)
+async def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid refresh token",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            settings.SECRET_KEY,
+            algorithms=[settings.JWT_ALGORITHM],
+        )
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError as e:
+        print(f"JWT Error during refresh: {e}")
+        raise credentials_exception
+
+    user = crud.get_user_by_username(db, username=username)
+    if user is None:
+        raise credentials_exception
+
+    # Create new access and refresh tokens
+    access_token = create_access_token(
+        data={
+            "sub": user.username,
+            "name": user.username,
+            "email": user.email,
+            "id": user.id,
+            "role": user.role,
+        }
+    )
+    new_refresh_token = create_refresh_token(data={"sub": user.username, "id": user.id})
+
+    return {
+        "access_token": access_token,
+        "refresh_token": new_refresh_token,
+        "token_type": "bearer",
+        "user": schemas.User.from_orm(user).dict(),
+    }

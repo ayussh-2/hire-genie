@@ -137,7 +137,7 @@ export default function DashboardPage() {
 
             // Fetch recommended jobs
             recommendedJobsRequest
-                .makeRequest("/api/jobs/recommended-jobs", {
+                .makeRequest("/api/jobs/recommended", {
                     showToast: false,
                 })
                 .then((response) => {
@@ -165,7 +165,7 @@ export default function DashboardPage() {
 
             // Fetch saved jobs
             savedJobsRequest
-                .makeRequest("/api/jobs/saved-jobs", {
+                .makeRequest("/api/jobs/saved", {
                     showToast: false,
                 })
                 .then((response) => {
