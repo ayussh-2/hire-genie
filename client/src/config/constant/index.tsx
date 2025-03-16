@@ -1,3 +1,4 @@
+import { Job } from "@/types/job";
 import {
     Brain,
     FileText,
@@ -101,3 +102,81 @@ export const faqs = [
         answer: "Our AI achieves over 95% accuracy in extracting relevant information from resumes, and continuously improves through machine learning.",
     },
 ];
+
+export const demoJob: Job = {
+    id: "demo",
+    title: "Senior Frontend Developer",
+    company: "TechCorp",
+    logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=96&h=96",
+    location: "San Francisco, CA",
+    type: "Full-time",
+    experience: "5+ years",
+    salary: "$120k - $180k",
+    postedDate: "2024-03-15",
+    applicationDeadline: "2024-04-15",
+    applicants: 45,
+    matchScore: 92,
+    description: `We're looking for a Senior Frontend Developer to join our growing team. You'll be responsible for building and maintaining our web applications, working closely with our design and backend teams to deliver exceptional user experiences.
+
+The ideal candidate has strong experience with modern frontend frameworks, a keen eye for design, and a passion for building performant, accessible web applications.`,
+    responsibilities: [
+        "Lead development of key frontend projects and features",
+        "Collaborate with designers and backend engineers",
+        "Mentor junior developers and conduct code reviews",
+        "Optimize application performance and accessibility",
+        "Contribute to technical architecture decisions",
+        "Write clean, maintainable, and well-tested code",
+        "Participate in agile ceremonies and technical planning",
+    ],
+    requirements: [
+        "5+ years of experience in frontend development",
+        "Expert knowledge of React, TypeScript, and modern JavaScript",
+        "Strong understanding of web performance optimization",
+        "Experience with state management (Redux, MobX, etc.)",
+        "Familiarity with testing frameworks (Jest, React Testing Library)",
+        "Knowledge of CI/CD practices and tools",
+        "Excellent problem-solving and communication skills",
+    ],
+    niceToHave: [
+        "Experience with Next.js or similar frameworks",
+        "Contributions to open source projects",
+        "Knowledge of GraphQL",
+        "Experience with design systems",
+        "Understanding of web accessibility standards",
+    ],
+    benefits: [
+        "Competitive salary and equity package",
+        "Health, dental, and vision insurance",
+        "Flexible work hours and location",
+        "Professional development budget",
+        "Home office setup allowance",
+        "Regular team events and retreats",
+        "Generous PTO and parental leave",
+    ],
+    skills: {
+        match: ["React", "TypeScript", "JavaScript", "HTML/CSS", "Git"],
+        missing: ["GraphQL", "AWS", "Node.js"],
+    },
+    company_info: {
+        name: "TechCorp",
+        description:
+            "TechCorp is a leading software company specializing in developer tools and cloud infrastructure. We're backed by top investors and growing rapidly, with a mission to make developers' lives easier through innovative solutions.",
+        size: "201-500 employees",
+        industry: "Software Development",
+        founded: 2018,
+        location: "San Francisco, CA",
+        website: "https://example.com",
+        benefits: [
+            "Remote-friendly",
+            "Flexible hours",
+            "Competitive pay",
+            "Great benefits",
+        ],
+        culture: [
+            "Innovation-driven",
+            "Collaborative",
+            "Work-life balance",
+            "Learning-focused",
+        ],
+    },
+};
