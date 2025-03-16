@@ -30,18 +30,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     const data = await response.json();
 
-                    console.log(data);
-
                     if (response.ok && data?.status == "success") {
                         return {
                             id: data.data.user.id,
                             email: data.data.user.email,
                             accessToken: data.data.access_token,
+                            refreshToken: data.data.refresh_token,
                             role: data.data.user.role,
                             name: data.data.user.name,
                         };
                     }
-
                     return null;
                 } catch (error) {
                     console.error("Authentication error:", error);
@@ -55,13 +53,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (user) {
                 token.id = user.id;
                 token.accessToken = (user as any).accessToken;
+                token.refreshToken = (user as any).refreshToken;
+                token.role = (user as any).role;
+                token.name = (user as any).name;
             }
             return token;
         },
         async session({ session, token }: { session: any; token: any }) {
             if (token && session.user) {
                 session.user.id = token.id;
+                session.user.role = token.role;
+                session.user.name = token.name;
                 session.accessToken = token.accessToken;
+                session.refreshToken = token.refreshToken;
             }
             return session;
         },
