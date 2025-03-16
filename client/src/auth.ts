@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                             accessToken: data.data.access_token,
                             refreshToken: data.data.refresh_token,
                             role: data.data.user.role,
-                            name: data.data.user.name,
+                            name: data.data.user.username,
                         };
                     }
                     return null;

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 interface ApiResponse<T> {
     status: "success" | "error";
     message: string;
-    data?: T;
+    data?: any;
     errors?: string | Record<string, string> | any;
     meta?: {
         page?: number;
@@ -40,14 +40,12 @@ interface UseApiRequestResult<T> {
 
 export function useApiRequest<T = any>(): UseApiRequestResult<T> {
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [data, setData] = useState<T | null>(null);
+    const [data, setData] = useState<any | null>(null);
     const [error, setError] = useState<ApiResponse<any>["errors"] | null>(null);
     const { user, updateSession, logout } = useAuth();
     const router = useRouter();
 
-    // Track if we're currently refreshing to prevent infinite loops
     const isRefreshing = { current: false };
-    // Store pending requests that are waiting for token refresh
     const pendingRequests: Array<() => Promise<any>> = [];
 
     const refreshToken = async (): Promise<boolean> => {
@@ -75,11 +73,9 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
 
             const data = await response.json();
             if (data.status === "success") {
-                // Update tokens in local storage
                 localStorage.setItem("accessToken", data.data.access_token);
                 localStorage.setItem("refreshToken", data.data.refresh_token);
 
-                // Update auth context
                 await updateSession({
                     ...user,
                     accessToken: data.data.access_token,
@@ -90,7 +86,6 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
             return false;
         } catch (error) {
             console.error("Token refresh failed:", error);
-            // Handle failed refresh (logout user)
             await logout();
             router.push("/login");
             return false;
@@ -173,9 +168,7 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
                 requestOptions
             );
 
-            // Handle 401 (Unauthorized) - Try to refresh token
             if (response.status === 401 && requireAuth && !isRetry) {
-                // If we're already refreshing, queue this request to retry later
                 if (isRefreshing.current) {
                     return new Promise((resolve) => {
                         pendingRequests.push(() =>
@@ -189,14 +182,11 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
                 isRefreshing.current = false;
 
                 if (refreshed) {
-                    // Process pending requests
                     pendingRequests.forEach((callback) => callback());
                     pendingRequests.length = 0;
 
-                    // Retry the current request with the new token
                     return executeRequest(url, options, true);
                 } else {
-                    // If refresh failed, clear pending requests
                     pendingRequests.length = 0;
 
                     if (showToast) {
@@ -210,9 +200,7 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
             }
 
             const responseData = (await response.json()) as ApiResponse<T>;
-
             if (!response.ok || responseData.status === "error") {
-                // Handle error responses
                 setError(
                     responseData.errors || {
                         message: responseData.message || "Unknown error",
@@ -229,7 +217,7 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
                 return responseData;
             }
 
-            setData(responseData.data || null);
+            setData(responseData || null);
 
             if (showToast && !isRetry) {
                 toast.success(
@@ -247,7 +235,7 @@ export function useApiRequest<T = any>(): UseApiRequestResult<T> {
                     typeof successMessage === "string"
                         ? successMessage
                         : "Success",
-                data: responseData.data,
+                data: responseData,
             };
         } catch (err) {
             console.error("API request error:", err);

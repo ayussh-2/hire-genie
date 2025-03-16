@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser({
                 id: session.user.id as string,
                 email: session.user.email as string,
-                name: session.user.username as string,
+                name: session.user.name as string,
                 role: session.user.role as string,
                 accessToken: (session as any).accessToken as string,
             });
