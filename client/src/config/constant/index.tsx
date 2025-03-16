@@ -1,4 +1,11 @@
 import { Job } from "@/types/job";
+import { JobPosting, Candidate, Analytics } from "@/types/recruiter";
+interface Stats {
+    activeJobs: number;
+    totalCandidates: number;
+    shortlisted: number;
+    interviews: number;
+}
 import {
     Brain,
     FileText,
@@ -10,6 +17,7 @@ import {
     GraduationCap,
     Zap,
 } from "lucide-react";
+import { Profile } from "next-auth";
 
 export const features = [
     {
@@ -178,5 +186,130 @@ The ideal candidate has strong experience with modern frontend frameworks, a kee
             "Work-life balance",
             "Learning-focused",
         ],
+    },
+};
+
+export const mockProfile: Profile = {
+    name: "Sarah Chen",
+    title: "Senior Technical Recruiter",
+    company: "TechCorp",
+    location: "San Francisco, CA",
+    activeJobs: 12,
+    totalHires: 45,
+    timeToHire: "21 days",
+    responseRate: "94%",
+    skills: ["Recruiting", "Sourcing", "Interviewing", "Onboarding"],
+};
+
+export const mockStats: Stats = {
+    activeJobs: 12,
+    totalCandidates: 156,
+    shortlisted: 28,
+    interviews: 15,
+};
+
+export const mockJobPostings: JobPosting[] = [
+    {
+        id: 1,
+        title: "Senior Frontend Developer",
+        department: "Engineering",
+        location: "San Francisco, CA",
+        type: "Full-time",
+        salary: "$120k - $180k",
+        applicants: 45,
+        views: 234,
+        status: "Active",
+        posted: "2024-03-01",
+        deadline: "2024-03-31",
+    },
+    {
+        id: 2,
+        title: "UI/UX Designer",
+        department: "Design",
+        location: "Remote",
+        type: "Full-time",
+        salary: "$100k - $150k",
+        applicants: 32,
+        views: 189,
+        status: "Active",
+        posted: "2024-03-05",
+        deadline: "2024-04-05",
+    },
+    {
+        id: 3,
+        title: "Full Stack Engineer",
+        department: "Engineering",
+        location: "New York, NY",
+        type: "Full-time",
+        salary: "$130k - $190k",
+        applicants: 28,
+        views: 167,
+        status: "Draft",
+        posted: "2024-03-10",
+        deadline: "2024-04-10",
+    },
+];
+
+export const mockCandidates: Candidate[] = [
+    {
+        id: 1,
+        name: "Michael Brown",
+        photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=64&h=64",
+        role: "Senior Frontend Developer",
+        experience: "8 years",
+        location: "San Francisco, CA",
+        status: "Interview Scheduled",
+        matchScore: 92,
+        skills: ["React", "TypeScript", "Node.js"],
+        appliedDate: "2024-03-15",
+        email: "michael@example.com",
+        phone: "+1 (555) 123-4567",
+    },
+    {
+        id: 2,
+        name: "Emily Chen",
+        photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=64&h=64",
+        role: "UI/UX Designer",
+        experience: "6 years",
+        location: "Remote",
+        status: "Shortlisted",
+        matchScore: 88,
+        skills: ["Figma", "User Research", "Design Systems"],
+        appliedDate: "2024-03-14",
+        email: "emily@example.com",
+        phone: "+1 (555) 234-5678",
+    },
+    {
+        id: 3,
+        name: "David Kim",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=64&h=64",
+        role: "Full Stack Engineer",
+        experience: "5 years",
+        location: "New York, NY",
+        status: "New",
+        matchScore: 85,
+        skills: ["React", "Python", "PostgreSQL"],
+        appliedDate: "2024-03-13",
+        email: "david@example.com",
+        phone: "+1 (555) 345-6789",
+    },
+];
+
+export const mockAnalytics: Analytics = {
+    applicationTrend: [
+        { date: "Mar 1", count: 12 },
+        { date: "Mar 8", count: 18 },
+        { date: "Mar 15", count: 15 },
+        { date: "Mar 22", count: 25 },
+    ],
+    sourceBreakdown: [
+        { source: "LinkedIn", percentage: 45 },
+        { source: "Company Website", percentage: 30 },
+        { source: "Indeed", percentage: 15 },
+        { source: "Referrals", percentage: 10 },
+    ],
+    timeToHire: {
+        average: 21,
+        trend: "decreasing",
     },
 };

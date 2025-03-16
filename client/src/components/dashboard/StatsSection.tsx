@@ -1,7 +1,7 @@
 import { Briefcase, BookmarkCheck, Clock, Award } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DashboardStats } from "@/app/(protected)/dashboard/page";
+import { DashboardStats } from "@/app/job-seeker/dashboard/page";
 
 type StatsSectionProps = {
     isLoading: boolean;
